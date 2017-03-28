@@ -29,13 +29,11 @@ df_fournan = df_headers.dropna(axis = 0, thresh = 4)
 # What indexing command(s) can you use to select all rows
 # EXCEPT those rows?
 #
-# .. your code here ..
 
 
 # TODO: Get rid of the 'RK' column
 #
-# .. your code here ..
-
+df_header_fix.drop('RK', axis = 1)
 
 # TODO: Ensure there are no holes in your index by resetting
 # it. By the way, don't store the original index
