@@ -6,9 +6,10 @@ import numpy as np
 # TODO:
 # Load up the dataset, setting correct header labels.
 #
-# .. your code here ..
+df = pd.read_csv('Datasets/census.data')
 
-
+headers = ['number', 'education', 'age', 'capital-gain', 'race', 'capital-loss', 'hours-per-week', 'sex', 'classification']
+df.columns = headers
 
 #
 # TODO:
@@ -23,8 +24,7 @@ import numpy as np
 # should be represented as nans, you can convert them using
 # na_values when loading the dataframe.
 #
-# .. your code here ..
-
+df.dtypes
 
 
 #

@@ -29,28 +29,28 @@ df_fournan = df_headers.dropna(axis = 0, thresh = 4)
 # What indexing command(s) can you use to select all rows
 # EXCEPT those rows?
 #
-
+df_header_fix = df_fournan.drop([13, 25, 37], axis = 0)
 
 # TODO: Get rid of the 'RK' column
 #
-df_header_fix.drop('RK', axis = 1)
+df_column_fix = df_header_fix.drop('RK', axis = 1)
 
 # TODO: Ensure there are no holes in your index by resetting
 # it. By the way, don't store the original index
 #
-# .. your code here ..
-
+df_index_fix = df_column_fix.reset_index(drop = True)
 
 
 # TODO: Check the data type of all columns, and ensure those
 # that should be numeric are numeric
 #
-# .. your code here ..
-
+df_index_fix.dtypes
+df_numeric_fix = df_index_fix[['GP', 'G', 'A', 'PTS', '+/-', 'PIM', 'PTS/G', 'SOG', 'PCT', 'GWG', 'G', 'A', 'G', 'A']].apply(pd.to_numeric)
 
 
 # TODO: Your dataframe is now ready! Use the appropriate 
 # commands to answer the questions on the course lab page.
 #
-# .. your code here ..
+df_numeric_fix.PCT.nunique()
 
+df_numeric_fix.sum(df_numeric_fix[15], df_numeric_fix.GP[16])
