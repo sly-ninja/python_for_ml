@@ -6,10 +6,11 @@ import numpy as np
 # TODO:
 # Load up the dataset, setting correct header labels.
 #
-df = pd.read_csv('Datasets/census.data')
+df = pd.read_csv('Datasets/census.data', header = None)
 
-headers = ['number', 'education', 'age', 'capital-gain', 'race', 'capital-loss', 'hours-per-week', 'sex', 'classification']
+headers = ['number', 'education', 'age', 'capital-gain', 'race', 'capital-loss', 'hours-per-week', 'sex','classification']
 df.columns = headers
+df_column_fix = df.drop('number', axis = 1)
 
 #
 # TODO:
@@ -24,7 +25,13 @@ df.columns = headers
 # should be represented as nans, you can convert them using
 # na_values when loading the dataframe.
 #
-df.dtypes
+# df_column_fix.dtypes
+df_nan_fix = df_column_fix.replace('?', np.NaN)
+# df_type_fix = df_nan_fix['capital-gain']
+
+s = pd.Series([df_nan_fix['capital-gain']])
+
+pd.to_numeric(s)
 
 
 #
@@ -38,9 +45,12 @@ df.dtypes
 # what makes more sense generally---to represent such features with a
 # continuous numeric type... or a series of categories?
 #
-# .. your code here ..
 
+df_nan_fix['education'].astype('category')
+df_nan_fix['classification'].astype('category')
 
+pd.get_dummies(df_nan_fix['race'])
+pd.get_dummies(df_nan_fix['sex'])
 
 #
 # TODO:
