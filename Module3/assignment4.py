@@ -13,8 +13,7 @@ plt.style.use('ggplot')
 # TODO: Load up the Seeds Dataset into a Dataframe
 # It's located at 'Datasets/wheat.data'
 # 
-# .. your code here ..
-
+seeds_dataset = pd.read_csv('Datasets/wheat.data', index_col = 0)
 
 
 #
@@ -22,8 +21,7 @@ plt.style.use('ggplot')
 # (Hint: You shouldn't have)
 # Also get rid of the 'area' and 'perimeter' features
 # 
-# .. your code here ..
-
+truncated_dataset = seeds_dataset.drop(['area', 'perimeter'], axis = 1)
 
 
 #
@@ -31,10 +29,11 @@ plt.style.use('ggplot')
 # the 'wheat_type' feature. Be sure to set the optional
 # display parameter alpha to 0.4
 # 
-# .. your code here ..
-
+parallel_coordinates(truncated_dataset, 'wheat_type', alpha = 0.4)
 
 
 plt.show()
+
+#http://stackoverflow.com/questions/8230638/parallel-coordinates-plot-in-matplotlib
 
 
