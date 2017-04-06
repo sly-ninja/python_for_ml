@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib
 import assignment2_helper as helper
+from sklearn.decomposition import PCA
 
 # Look pretty...
 # matplotlib.style.use('ggplot')
@@ -9,7 +10,11 @@ plt.style.use('ggplot')
 
 
 # Do * NOT * alter this line, until instructed!
-scaleFeatures = False
+scaleFeatures = True
+
+# To add feature scaling, you're going to need to use SciKit-Learn's StandardScaler: 
+# http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html#sklearn.preprocessing.StandardScaler
+# After scaling your features, the variance of all features (and thus their standard deviations) should be identical.
 
 
 # TODO: Load up the dataset and remove any and all
@@ -19,9 +24,8 @@ scaleFeatures = False
 # QUESTION: Should the id column be included as a
 # feature?
 #
-# .. your code here ..
-
-
+df = pd.read_csv('Datasets/kidney_disease.csv', index_col = 0)
+df = df.dropna(axis =  0)
 
 # Create some color coded labels; the actual label feature
 # will be removed prior to executing PCA, since it's unsupervised.
@@ -32,8 +36,7 @@ labels = ['red' if i=='ckd' else 'green' for i in df.classification]
 # TODO: Use an indexer to select only the following columns:
 #       ['bgr','wc','rc']
 #
-# .. your code here ..
-
+df = df.loc[:, ['bgr', 'wc', 'rc']]
 
 
 # TODO: Print out and check your dataframe's dtypes. You'll might
@@ -47,8 +50,7 @@ labels = ['red' if i=='ckd' else 'green' for i in df.classification]
 # properly detect and convert them to that data type for you, then use
 # an appropriate command to coerce these features into the right type.
 #
-# .. your code here ..
-
+df = df.apply(pd.to_numeric)
 
 
 # TODO: PCA Operates based on variance. The variable with the greatest
@@ -60,9 +62,8 @@ labels = ['red' if i=='ckd' else 'green' for i in df.classification]
 # Hint: If you don't see all three variables: 'bgr','wc' and 'rc', then
 # you probably didn't complete the previous step properly.
 #
-# .. your code here ..
-
-
+df.var()
+df.describe()
 
 # TODO: This method assumes your dataframe is called df. If it isn't,
 # make the appropriate changes. Don't alter the code in scaleFeatures()
@@ -77,8 +78,12 @@ if scaleFeatures: df = helper.scaleFeatures(df)
 # Ensure your PCA instance is saved in a variable called 'pca',
 # and that the results of your transformation are saved in 'T'.
 #
-# .. your code here ..
 
+pca = PCA(n_components=2, svd_solver='full')
+
+pca.fit(df)
+  
+T = pca.transform(df)
 
 # Plot the transformed data as a scatter plot. Recall that transforming
 # the data will result in a NumPy NDArray. You can either use MatPlotLib
