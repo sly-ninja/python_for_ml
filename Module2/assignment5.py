@@ -6,11 +6,11 @@ import numpy as np
 # TODO:
 # Load up the dataset, setting correct header labels.
 #
-df = pd.read_csv('Datasets/census.data', header = None)
+df = pd.read_csv('Datasets/census.data', header = None, index_col = 0)
 
-headers = ['number', 'education', 'age', 'capital-gain', 'race', 'capital-loss', 'hours-per-week', 'sex','classification']
+headers = ['education', 'age', 'capital-gain', 'race', 'capital-loss', 'hours-per-week', 'sex','classification']
 df.columns = headers
-df_column_fix = df.drop('number', axis = 1)
+# df_column_fix = df.drop('number', axis = 1)
 
 #
 # TODO:
@@ -26,13 +26,14 @@ df_column_fix = df.drop('number', axis = 1)
 # na_values when loading the dataframe.
 #
 # df_column_fix.dtypes
-df_nan_fix = df_column_fix.replace('?', np.NaN)
+df = df.replace('?', np.NaN)
 # df_type_fix = df_nan_fix['capital-gain']
 
-s = pd.Series([df_nan_fix['capital-gain']])
+# s = pd.Series([df_nan_fix['capital-gain']])
 
-pd.to_numeric(s)
+# pd.to_numeric(s)
 
+df['capital-gain'] = pd.to_numeric(df['capital-gain'])
 
 #
 # TODO:
@@ -46,11 +47,11 @@ pd.to_numeric(s)
 # continuous numeric type... or a series of categories?
 #
 
-df_nan_fix['education'].astype('category')
-df_nan_fix['classification'].astype('category')
+df['education'].astype('category')
+df['classification'].astype('category')
 
-pd.get_dummies(df_nan_fix['race'])
-pd.get_dummies(df_nan_fix['sex'])
+pd.get_dummies(df['race'])
+pd.get_dummies(df['sex'])
 
 #
 # TODO:
