@@ -30,7 +30,7 @@ scaleFeatures = True
 # feature?
 #
 df = pd.read_csv('Datasets/kidney_disease.csv', index_col = 0)
-df = df.dropna(axis =  0)
+df = df.dropna(axis = 0)
 
 # Create some color coded labels; the actual label feature
 # will be removed prior to executing PCA, since it's unsupervised.
@@ -38,11 +38,14 @@ df = df.dropna(axis =  0)
 labels = ['red' if i=='ckd' else 'green' for i in df.classification]
 
 
-# TODO: Use an indexer to select only the following columns:
-#       ['bgr','wc','rc']
+# TODO: 
+# ['id', 'classification', 'rbc', 'pc', 'pcc', 'ba', 'htn', 'dm', 'cad', 'appet', 'pe', 'ane']
+# Instead of using an indexer to select just the bgr, rc, and wc, alter your 
+# assignment code to drop all the nominal features listed above. 
 #
-df = df.loc[:, ['bgr', 'wc', 'rc']]
 
+# df = df.drop(['classification', 'rbc', 'pc', 'pcc', 'ba', 'htn', 'dm', 'cad', 'appet', 'pe', 'ane'], axis =  1)
+df = df.drop(['classification'], axis = 1)
 
 # TODO: Print out and check your dataframe's dtypes. You'll might
 # want to set a breakpoint after you print it out so you can stop the
@@ -55,7 +58,8 @@ df = df.loc[:, ['bgr', 'wc', 'rc']]
 # properly detect and convert them to that data type for you, then use
 # an appropriate command to coerce these features into the right type.
 #
-df = df.apply(pd.to_numeric)
+df[['wc', 'rc']] = df[['wc', 'rc']].apply(pd.to_numeric)
+df = pd.get_dummies(df[['rbc', 'pc', 'pcc', 'ba', 'htn', 'dm', 'cad', 'appet', 'pe', 'ane']])
 
 
 # TODO: PCA Operates based on variance. The variable with the greatest
