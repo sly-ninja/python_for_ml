@@ -56,7 +56,7 @@ pca = PCA(n_components=2, svd_solver='full')
 pca.fit(df)
 T = pca.transform(df)
 
-Plot2D(T, 'title', 0, 1, num_to_plot = 40)
+# Plot2D(T, 'title', 0, 1, num_to_plot = 40)
 
 #
 # TODO: Implement Isomap here. Reduce the dataframe df down
@@ -65,13 +65,13 @@ Plot2D(T, 'title', 0, 1, num_to_plot = 40)
 #
 from sklearn import manifold
 
-iso = manifold.Isomap(n_neighbors = 4, n_components = 3)
+iso = manifold.Isomap(n_neighbors = 3, n_components = 3)
 iso.fit(df)
 manifold = iso.transform(df)
 df.shape
 manifold.shape
 
-Plot2D(manifold, 'title', 0, 1, num_to_plot = 40)
+Plot2D(manifold, 'title', 0,1, num_to_plot = 40)
 
 #
 # TODO: If you're up for a challenge, draw your dataframes in 3D
@@ -85,19 +85,21 @@ def Plot3D(T, title, x, y, z, num_to_plot=40):
   ax.set_title(title)
   ax.set_xlabel('Component: {0}'.format(x))
   ax.set_ylabel('Component: {0}'.format(y))
-  #ax.set_zlabel('Component: {0}'.format(z))
+  ax.set_zlabel('Component: {0}'.format(z))
   x_size = (max(T[:,x]) - min(T[:,x])) * 0.08
   y_size = (max(T[:,y]) - min(T[:,y])) * 0.08
-  #z_size = (max(T[:,y]) - min(T[:,y])) * 0.08
+  z_size = (max(T[:,z]) - min(T[:,z])) * 0.08
   for i in range(num_to_plot):
     img_num = int(random.random() * num_images)
-    x0, y0 = T[img_num,x]-x_size/2., T[img_num,y]-y_size/2.
-    x1, y1 = T[img_num,x]+x_size/2., T[img_num,y]+y_size/2.
+    x0, y0, z0 = T[img_num,x]-x_size/2., T[img_num,y]-y_size/2., T[img_num,z]-z_size/2
+    x1, y1, z1 = T[img_num,x]+x_size/2., T[img_num,y]+y_size/2., T[img_num,z]+z_size/2
     
     img = df.loc[i,:].values.reshape(num_pixels, num_pixels)
     ax.imshow(img, aspect='auto', cmap=plt.cm.gray, interpolation='nearest', zorder=100000, extent=(x0, x1, y0, y1))
 
   # It also plots the full scatter:
-  ax.scatter(T[:,x],T[:,y], marker='.',alpha=0.7)
+  ax.scatter(T[:,x],T[:,y], T[:,z], marker='.',alpha=0.7)
+
+# Plot3D(manifold, 'title', 0, 1, 2, num_to_plot = 40)
 
 plt.show()
