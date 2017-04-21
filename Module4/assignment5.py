@@ -1,8 +1,8 @@
 import pandas as pd
 
 from scipy import misc
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib
+# from mpl_toolkits.mplot3d import Axes3D
+# import matplotlib
 import matplotlib.pyplot as plt
 
 # Look pretty...
