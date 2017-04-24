@@ -22,28 +22,30 @@ def showandtell(title=None):
 # TODO: Load up the dataset and take a peek at its head
 # Convert the date using pd.to_datetime, and the time using pd.to_timedelta
 #
-# .. your code here ..
+df = pd.read_csv('Datasets/CDR.csv')
 
-
+df['CallDate'] = pd.to_datetime( df['CallDate'] )
+df['CallTime'] = pd.to_timedelta( df['CallTime'])
 #
 # TODO: Get a distinct list of "In" phone numbers (users) and store the values in a
 # regular python list.
 # Hint: https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.tolist.html
 #
-# .. your code here ..
+import numpy as np
 
+u = np.unique(df['In'])
+unique_nums = u.tolist()
 
 # 
 # TODO: Create a slice called user1 that filters to only include dataset records where the
 # "In" feature (user phone number) is equal to the first number on your unique list above;
 # that is, the very first number in the dataset
 #
-# .. your code here ..
-
+user1 = df[df['In'] == unique_nums[0]]
 
 # INFO: Plot all the call locations
-user1.plot.scatter(x='TowerLon', y='TowerLat', c='gray', alpha=0.1, title='Call Locations')
-showandtell()  # Comment this line out when you're ready to proceed
+user1.plot.scatter(x='TowerLon', y='TowerLat', c='gray', marker='o', alpha=0.1, title='Call Locations')
+# showandtell()  # Comment this line out when you're ready to proceed
 
 
 #
@@ -68,9 +70,7 @@ showandtell()  # Comment this line out when you're ready to proceed
 # TODO: Add more filters to the user1 slice you created. Add bitwise logic so that you're
 # only examining records that came in on weekends (sat/sun).
 #
-# .. your code here ..
-
-
+user1 = user1[(user1['DOW'] == 'Sat') | (user1['DOW'] == 'Sun')]
 #
 # TODO: Further filter it down for calls that are came in either before 6AM OR after 10pm (22:00:00).
 # You can use < and > to compare the string times, just make sure you code them as military time
@@ -79,9 +79,7 @@ showandtell()  # Comment this line out when you're ready to proceed
 # You might also want to review the Data Manipulation section for this. Once you have your filtered
 # slice, print out its length:
 #
-# .. your code here ..
-
-
+user1a = user1[('06:00:00' > user1['CallTime']) | (user1['CallTime'] > '22:00:00')]
 #
 # INFO: Visualize the dataframe with a scatter plot as a sanity check. Since you're familiar
 # with maps, you know well that your X-Coordinate should be Longitude, and your Y coordinate
@@ -94,9 +92,9 @@ showandtell()  # Comment this line out when you're ready to proceed
 # caller's residence:
 fig = plt.figure()
 ax = fig.add_subplot(111)
-ax.scatter(user1.TowerLon,user1.TowerLat, c='g', marker='o', alpha=0.2)
-ax.set_title('Weekend Calls (<6am or >10p)')
-showandtell()  # TODO: Comment this line out when you're ready to proceed
+ax.scatter(user1a.TowerLon, user1a.TowerLat, c='g', marker='o', alpha=0.2) 
+# user1.plot.scatter(user1.TowerLon, user1.TowerLat, c='gray', alpha=0.1, title='Weekend Twilight Calls')
+# showandtell()  # TODO: Comment this line out when you're ready to proceed
 
 
 
@@ -114,10 +112,20 @@ showandtell()  # TODO: Comment this line out when you're ready to proceed
 #
 # Hint: Make sure you graph the CORRECT coordinates. This is part of your domain expertise.
 #
-# .. your code here ..
+from sklearn.cluster import KMeans
 
+user1b = user1a[['TowerLon', 'TowerLat']]
 
-showandtell()  # TODO: Comment this line out when you're ready to proceed
+model = KMeans(n_clusters = 7)
+model.fit(user1b)
+
+#
+# INFO: Print and plot the centroids...
+centroids = model.cluster_centers_
+ax.scatter(centroids[:,0], centroids[:,1], marker='x', c='blue', alpha=0.5, linewidths=3, s=169)
+print('centroids:', centroids)
+
+# showandtell()  # TODO: Comment this line out when you're ready to proceed
 
 
 
@@ -125,5 +133,16 @@ showandtell()  # TODO: Comment this line out when you're ready to proceed
 # TODO: Repeat the above steps for all 10 individuals, being sure to record their approximate home
 # locations. You might want to use a for-loop, unless you enjoy typing.
 #
-# .. your code here ..
+for index,item in enumerate(unique_nums):
+    user = df[df['In'] == unique_nums[index]] 
+    user = user[('06:00:00' > user['CallTime']) | (user['CallTime'] > '22:00:00')] 
+    user = user[(user['DOW'] == 'Sat') | (user['DOW'] == 'Sun')] 
+    user = user[['TowerLon', 'TowerLat']]
+    
+    model = KMeans(n_clusters = 7)
+    model.fit(user)
+    centroids = model.cluster_centers_
+    ax.scatter(centroids[:,0], centroids[:,1], marker='x', c='blue', alpha=0.5, linewidths=3, s=169)
+    print(item, centroids)
+
 
