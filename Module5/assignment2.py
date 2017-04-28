@@ -142,6 +142,7 @@ for index,item in enumerate(unique_nums):
     model = KMeans(n_clusters = 7)
     model.fit(user)
     centroids = model.cluster_centers_
+    
     ax.scatter(centroids[:,0], centroids[:,1], marker='x', c='blue', alpha=0.5, linewidths=3, s=169)
     print(item, centroids)
 

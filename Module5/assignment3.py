@@ -19,11 +19,11 @@ def showandtell(title=None):
 
 def clusterInfo(model):
   print("Cluster Analysis Inertia: ", model.inertia_)
-  print('------------------------------------------')
   for i in range(len(model.cluster_centers_)):
     print("\n  Cluster ", i)
     print("    Centroid ", model.cluster_centers_[i])
     print("    #Samples ", (model.labels_==i).sum()) # NumPy Power
+  print('------------------------------------------')
 
 # Find the cluster with the least # attached nodes
 
@@ -50,10 +50,10 @@ def doKMeans(data, clusters=0):
   # of your domain expertise. Also, *YOU* need to instantiate (and return) the variable named `model`
   # here, which will be a SKLearn K-Means model for this to work.
   #
-  user1a = user1[['TowerLat', 'TowerLon']]
+  data = data[['TowerLat', 'TowerLon']]
   
   model = KMeans(clusters)
-  model.fit(user1a)
+  model.fit(data)
 
   return model
 
@@ -91,7 +91,7 @@ unique_numbers = np.unique(df['In'])
 #   3. They probably spend time commuting between work and home everyday
 
   
-print("\n\nExamining person: ", 0)
+# print("\n\nExamining person: ", 0)
 # 
 # TODO: Create a slice called user1 that filters to only include dataset records where the
 # "In" feature (user phone number) is equal to the first number on your unique list above
@@ -127,6 +127,26 @@ user1.plot.scatter(x='TowerLon', y='TowerLat', c='gray', marker='o', alpha=0.1, 
 # tower closest to them.....
 model = doKMeans(user1, 4)
 
+#==============================================================================
+# for index,item in enumerate(unique_numbers):
+#     print(item)
+#     user = df[df['In'] == unique_numbers[index]] 
+#     user = user[(user['CallTime'] < '17:00:00')] 
+#     user = user[(user['DOW'] != 'Sat') | (user['DOW'] != 'Sun')] 
+#     
+#     model = doKMeans(user, 4)
+#     
+#     fig = plt.figure()
+#     ax = fig.add_subplot(111)
+#     ax.scatter(model.cluster_centers_[:,0], model.cluster_centers_[:,1], marker='x', c='blue', alpha=0.5, linewidths=3, s=169)
+#     
+#     midWayClusterIndices = clusterWithFewestSamples(model)
+#     midWaySamples = user[midWayClusterIndices]
+#     print("    Its Waypoint Time: ", midWaySamples.CallTime.mean())
+#     
+#     clusterInfo(model)
+# 
+#==============================================================================
 
 #
 # INFO: Print out the mean CallTime value for the samples belonging to the cluster with the LEAST
@@ -143,7 +163,6 @@ print("    Its Waypoint Time: ", midWaySamples.CallTime.mean())
 # Let's visualize the results!
 # First draw the X's for the clusters:
 fig = plt.figure()
-plt.title('Weekday Call Centroids')
 ax = fig.add_subplot(111)
 ax.scatter(model.cluster_centers_[:,1], model.cluster_centers_[:,0], s=169, c='r', marker='x', alpha=0.8, linewidths=2)
 #
