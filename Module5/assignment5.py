@@ -123,19 +123,15 @@ normalizer_y.transform(y)
 # NOTE: This has to be done because the only way to visualize the decision
 # boundary in 2D would be if your KNN algo ran in 2D as well:
 #
-#==============================================================================
-# from sklearn.decomposition import PCA
-# 
-# model = PCA(n_components=3, svd_solver='randomized', random_state=1)
-# 
-# model.fit(X)
-# model.transform(X)
-# 
-# model.fit(y)
-# model.transform(y)
-# 
-# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=1)
-#==============================================================================
+ from sklearn.decomposition import PCA
+ 
+ model = PCA(n_components=3, svd_solver='randomized', random_state=1)
+ 
+ model.fit(X_train)
+ X_train = model.transform(X_train)
+ 
+ X_test = model.transform(X_test)
+ 
 #
 # TODO: Create and train a KNeighborsClassifier. Start with K=9 neighbors.
 # NOTE: Be sure train your classifier against the pre-processed, PCA-

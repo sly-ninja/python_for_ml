@@ -5,6 +5,7 @@ import scipy.io
 
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
+import matplotlib
 
 # If you'd like to try this lab with PCA instead of Isomap,
 # as the dimensionality reduction technique:
@@ -76,7 +77,7 @@ def Plot2DBoundary(DTrain, LTrain, DTest, LTest):
     # DTest = our images isomap-transformed into 2D. But we still want
     # to plot the original image, so we look to the original, untouched
     # dataset (at index) to get the pixels:
-    img = df.iloc[index,:].reshape(num_pixels, num_pixels)
+    img = df.iloc[index,:].values.reshape(num_pixels, num_pixels)
     ax.imshow(img, aspect='auto', cmap=plt.cm.gray, interpolation='nearest', zorder=100000, extent=(x0, x1, y0, y1), alpha=0.8)
     img_num += 1
 
@@ -97,8 +98,13 @@ def Plot2DBoundary(DTrain, LTrain, DTest, LTest):
 # num_pixels value, and to rotate the images to being right-side-up
 # instead of sideways. This was demonstrated in the M4/A4 code:
 #
-# .. your code here ..
+mat = scipy.io.loadmat('../Module4/Datasets/face_data.mat')
+df = pd.DataFrame(mat['images']).T
+num_images, num_pixels = df.shape
+num_pixels = int(math.sqrt(num_pixels))
 
+for i in range(num_images):
+  df.loc[i,:] = df.loc[i,:].values.reshape(num_pixels, num_pixels).T.reshape(-1)
 
 #
 # TODO: Load up your face_labels dataset. It only has a single column, and
@@ -108,8 +114,8 @@ def Plot2DBoundary(DTrain, LTrain, DTest, LTest):
 # out the labels and compare to the face_labels.csv file to ensure you
 # loaded it correctly.
 #
-# .. your code here ..
-
+label = pd.read_csv('Datasets/face_labels.csv', header=None)
+label = label.iloc[:, 0]
 
 #
 # TODO: Do train_test_split. Use the same code as on the EdX platform in the
@@ -120,8 +126,9 @@ def Plot2DBoundary(DTrain, LTrain, DTest, LTest):
 # dataframe, which you will use to plot your testing data as images rather
 # than as points:
 #
-# .. your code here ..
+from sklearn.cross_validation import train_test_split
 
+data_train, data_test, label_train, label_test = train_test_split(df, label, test_size=0.15, random_state=7)
 
 
 if Test_PCA:
@@ -143,8 +150,14 @@ if Test_PCA:
   # transform both your training + test data, storing the results back into
   # data_train, and data_test.
   #
-  # .. your code here ..
-
+  from sklearn.decomposition import PCA
+  
+  pca_model = PCA(n_components=2, svd_solver='randomized', random_state=1)
+ 
+  pca_model.fit(data_train)
+  data_train = pca_model.transform(data_train)
+  data_test = pca_model.transform(data_test)
+ 
 else:
   # INFO: Isomap is used *before* KNeighbors to simplify your high dimensionality
   # image samples down to just 2 components! A lot of information has been is
@@ -165,9 +178,12 @@ else:
   # transform both your training + test data, storing the results back into
   # data_train, and data_test.
   #
-  # .. your code here ..
+  from sklearn import manifold
 
-
+  iso = manifold.Isomap(n_neighbors = 5, n_components = 2)
+  iso.fit(data_train)
+  data_train = iso.transform(data_train)
+  data_test = iso.transform(data_test)
 
 
 #
@@ -179,15 +195,18 @@ else:
 #
 # .. your code here ..
 
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import metrics
+
+model = KNeighborsClassifier(n_neighbors=9)
+model.fit(data_train, label_train.values.ravel())
 
 
 #
 # TODO: Calculate + Print the accuracy of the testing set (data_test and
 # label_test).
 #
-# .. your code here ..
-
-
+print(model.score(data_test, label_test))
 
 # Chart the combined decision boundary, the training data as 2D plots, and
 # the testing data as small images so we can visually validate performance.
