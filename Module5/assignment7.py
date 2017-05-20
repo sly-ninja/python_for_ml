@@ -1,10 +1,13 @@
+import pandas as pd
+import numpy as np
+
 # If you'd like to try this lab with PCA instead of Isomap,
 # as the dimensionality reduction technique:
 Test_PCA = True
 
 
 def plotDecisionBoundary(model, X, y):
-  print "Plotting..."
+  print("Plotting...")
   import matplotlib.pyplot as plt
   import matplotlib
   matplotlib.style.use('ggplot') # Look Pretty
@@ -57,8 +60,7 @@ def plotDecisionBoundary(model, X, y):
 # TODO: Load in the dataset, identify nans, and set proper headers.
 # Be sure to verify the rows line up by looking at the file in a text editor.
 #
-# .. your code here ..
-
+X = pd.read_csv('Datasets//breast-cancer-wisconsin.data', names = ['sample', 'thickness', 'size', 'shape', 'adhesion', 'epithelial', 'nuclei', 'chromatin', 'nucleoli', 'mitoses', 'status'])
 
 
 # 
@@ -70,25 +72,24 @@ def plotDecisionBoundary(model, X, y):
 # If you goofed up on loading the dataset and notice you have a `sample` column,
 # this would be a good place to drop that too if you haven't already.
 #
-# .. your code here ..
-
+y = X.iloc[:, 0]
+X.drop(['sample'], inplace=True, axis=1)
 
 
 #
 # TODO: With the labels safely extracted from the dataset, replace any nan values
 # with the mean feature / column value
 #
-# .. your code here ..
-
-
+X.replace('?', X.mean() inplace=True)
 
 #
 # TODO: Do train_test_split. Use the same variable names as on the EdX platform in
 # the reading material, but set the random_state=7 for reproduceability, and keep
 # the test_size at 0.5 (50%).
 #
-# .. your code here ..
+from sklearn.cross_validation import train_test_split
 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, random_state=7)
 
 
 
@@ -100,32 +101,43 @@ def plotDecisionBoundary(model, X, y):
 # which portion of the dataset is your model trained upon? Also which portion(s)
 # of your dataset actually get transformed?
 #
-# .. your code here ..
+from sklearn import preprocessing
 
-
-
+scaler = preprocessing.StandardScaler().fit(X_test)
+X_test = scaler.transform(X_test)
+X_train = scaler.transform(X_train)
 
 #
 # PCA and Isomap are your new best friends
 model = None
 if Test_PCA:
-  print "Computing 2D Principle Components"
+  print("Computing 2D Principle Components")
   #
   # TODO: Implement PCA here. Save your model into the variable 'model'.
   # You should reduce down to two dimensions.
   #
-  # .. your code here ..
-
+  from sklearn.decomposition import PCA
+  
+  model = PCA(n_components=2, svd_solver='randomized', random_state=1)
+ 
+  model.fit(X_train)
+  X_train = model.transform(X_train)
+  X_test = model.transform(X_test)
   
 
 else:
-  print "Computing 2D Isomap Manifold"
+  print("Computing 2D Isomap Manifold")
   #
   # TODO: Implement Isomap here. Save your model into the variable 'model'
   # Experiment with K values from 5-10.
   # You should reduce down to two dimensions.
   #
-  # .. your code here ..
+  from sklearn import manifold
+
+  model = manifold.Isomap(n_neighbors = 5, n_components = 2)
+  model.fit(X_train)
+  X_train = model.transform(X_train)
+  X_test = model.transform(X_test)
   
 
 
@@ -147,8 +159,11 @@ else:
 # general (high-K). You should also experiment with how changing the weights
 # parameter affects the results.
 #
-# .. your code here ..
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import metrics
 
+model = KNeighborsClassifier(n_neighbors=9)
+model.fit(X_train, y_train.values.ravel())
 
 
 #
@@ -166,7 +181,7 @@ else:
 #
 # TODO: Calculate + Print the accuracy of the testing set
 #
-# .. your code here ..
+print(model.score(X_test, y_test))
 
 
 plotDecisionBoundary(knmodel, X_test, y_test)
