@@ -80,8 +80,8 @@ X.drop(['sample'], inplace=True, axis=1)
 # TODO: With the labels safely extracted from the dataset, replace any nan values
 # with the mean feature / column value
 #
-X.replace('?', X.mean() inplace=True)
-
+X.replace('?', np.NaN, inplace=True)
+X = X.fillna(X.mean())
 #
 # TODO: Do train_test_split. Use the same variable names as on the EdX platform in
 # the reading material, but set the random_state=7 for reproduceability, and keep
