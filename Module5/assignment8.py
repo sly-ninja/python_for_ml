@@ -12,12 +12,12 @@ def drawLine(model, X_test, y_test, title):
   # and displaying the R2 coefficient
   fig = plt.figure()
   ax = fig.add_subplot(111)
-  ax.scatter(X_test, y_test, c='g', marker='o')
+#  ax.scatter(X_test, y_test, c='g', marker='o')
   ax.plot(X_test, model.predict(X_test), color='orange', linewidth=1, alpha=0.7)
 
-  print "Est 2014 " + title + " Life Expectancy: ", model.predict([[2014]])[0]
-  print "Est 2030 " + title + " Life Expectancy: ", model.predict([[2030]])[0]
-  print "Est 2045 " + title + " Life Expectancy: ", model.predict([[2045]])[0]
+  print("Est 2014 " + title + " Life Expectancy: ", model.predict([[2014]])[0])
+  print("Est 2030 " + title + " Life Expectancy: ", model.predict([[2030]])[0])
+  print("Est 2045 " + title + " Life Expectancy: ", model.predict([[2045]])[0])
 
   score = model.score(X_test, y_test)
   title += " R2: " + str(score)
@@ -33,16 +33,15 @@ def drawLine(model, X_test, y_test, title):
 # compare it to the dataset loaded in a text file or in a
 # spread sheet application
 #
-# .. your code here ..
-
+X = pd.read_csv('Datasets/life_expectancy.csv', sep='\t')
 
 #
 # TODO: Create your linear regression model here and store it in a
 # variable called 'model'. Don't actually train or do anything else
 # with it yet:
 #
-# .. your code here ..
-
+from sklearn import linear_model
+model = linear_model.LinearRegression()
 
 
 #
@@ -53,8 +52,20 @@ def drawLine(model, X_test, y_test, title):
 # INFO You might also want to read the note about slicing on the bottom
 # of this document before proceeding.
 #
-# .. your code here ..
+X_train = X.iloc[0:11, :]
+X_test = X.iloc[11:, :]
+#==============================================================================
+# X_train = X[X.Year < 1986]
+# X_test = X[X.Year >= 1986]
+# 
+#==============================================================================
+y_train = X_train.WhiteMale
+y_test = X_test.WhiteMale
 
+#==============================================================================
+# y_train2 = X_train.BlackFemale
+# y_test2 = X_test.BlackFemale 
+#==============================================================================
 
 
 #
@@ -65,9 +76,13 @@ def drawLine(model, X_test, y_test, title):
 # given the pre-1986 data you trained it with. It'll also produce a
 # 2030 and 2045 extrapolation.
 #
-# .. your code here ..
+model = model.fit(X_train, y_train)
+drawLine(model, X_test, y_test, 'WhiteMale')
 
-
+#==============================================================================
+# model.fit(X_train, y_train2)
+# drawLine(model, X_test, y_test2, 'BlackFemale')
+#==============================================================================
 #
 # TODO: Print the actual 2014 WhiteMale life expectancy from your
 # loaded dataset
